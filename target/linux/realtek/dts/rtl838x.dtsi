@@ -104,6 +104,9 @@
 	};
 
 	uart1: uart@b8002100 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&enable_uart1>;
+
 		status = "okay";
 
 		compatible = "ns16550a";
@@ -127,6 +130,20 @@
 		#gpio-cells = <2>;
 		interrupt-parent = <&intc>;
 		interrupts = <23>;
+	};
+
+	pinmux: pinmux@bb001000 {
+		compatible = "pinctrl-single";
+		reg = <0xbb001000 0x4>;
+
+		pinctrl-single,bit-per-mux;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <0x1>;
+		#pinctrl-cells = <2>;
+
+		enable_uart1: pinmux_enable_uart1 {
+			pinctrl-single,bits = <0x0 0x10 0x10>;
+		};
 	};
 
 	ethernet0: ethernet@bb00a300 {
