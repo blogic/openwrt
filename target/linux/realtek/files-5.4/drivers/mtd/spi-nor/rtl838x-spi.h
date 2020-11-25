@@ -22,8 +22,8 @@
  * Register access macros
  */
 
-#define spi_r32(reg)		__raw_readl(rtl838x_nor->base + reg)
-#define spi_w32(val, reg)	__raw_writel(val, rtl838x_nor->base + reg)
+#define spi_r32(reg)		readl(rtl838x_nor->base + reg)
+#define spi_w32(val, reg)	writel(val, rtl838x_nor->base + reg)
 #define spi_w32_mask(clear, set, reg)	\
 	spi_w32((spi_r32(reg) & ~(clear)) | (set), reg)
 
@@ -31,7 +31,7 @@
 				} while (!(spi_r32(SFCSR) & SFCSR_SPI_RDY))
 
 #define spi_w32w(val, reg)	do { \
-					__raw_writel(val, rtl838x_nor->base + reg); \
+					writel(val, rtl838x_nor->base + reg); \
 					SPI_WAIT_READY; \
 				} while (0)
 

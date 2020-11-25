@@ -13,23 +13,23 @@
 
 #define RTL838X_SW_BASE		((volatile void *) 0xBB000000)
 
-#define rtl83xx_r32(reg)	__raw_readl(reg)
-#define rtl83xx_w32(val, reg)	__raw_writel(val, reg)
+#define rtl83xx_r32(reg)	readl(reg)
+#define rtl83xx_w32(val, reg)	writel(val, reg)
 #define rtl83xx_w32_mask(clear, set, reg) rtl83xx_w32((rtl83xx_r32(reg) & ~(clear)) | (set), reg)
 
-#define rtl83xx_r8(reg)		__raw_readb(reg)
-#define rtl83xx_w8(val, reg)	__raw_writeb(val, reg)
+#define rtl83xx_r8(reg)		readb(reg)
+#define rtl83xx_w8(val, reg)	writeb(val, reg)
 
-#define sw_r32(reg)		__raw_readl(RTL838X_SW_BASE + reg)
-#define sw_w32(val, reg)	__raw_writel(val, RTL838X_SW_BASE + reg)
+#define sw_r32(reg)		readl(RTL838X_SW_BASE + reg)
+#define sw_w32(val, reg)	writel(val, RTL838X_SW_BASE + reg)
 #define sw_w32_mask(clear, set, reg)	\
 				sw_w32((sw_r32(reg) & ~(clear)) | (set), reg)
-#define sw_r64(reg)		((((u64)__raw_readl(RTL838X_SW_BASE + reg)) << 32) | \
-				__raw_readl(RTL838X_SW_BASE + reg + 4))
+#define sw_r64(reg)		((((u64)readl(RTL838X_SW_BASE + reg)) << 32) | \
+				readl(RTL838X_SW_BASE + reg + 4))
 
 #define sw_w64(val, reg)	do { \
-					__raw_writel((u32)((val) >> 32), RTL838X_SW_BASE + reg); \
-					__raw_writel((u32)((val) & 0xffffffff), \
+					writel((u32)((val) >> 32), RTL838X_SW_BASE + reg); \
+					writel((u32)((val) & 0xffffffff), \
 							RTL838X_SW_BASE + reg + 4); \
 				} while (0)
 

@@ -14,7 +14,7 @@ Index: linux-5.4.77/arch/mips/Kconfig
 ===================================================================
 --- linux-5.4.77.orig/arch/mips/Kconfig
 +++ linux-5.4.77/arch/mips/Kconfig
-@@ -630,6 +630,30 @@ config RALINK
+@@ -630,6 +630,26 @@ config RALINK
  	select ARCH_HAS_RESET_CONTROLLER
  	select RESET_CONTROLLER
  
@@ -29,17 +29,13 @@ Index: linux-5.4.77/arch/mips/Kconfig
 +	select SYS_SUPPORTS_BIG_ENDIAN
 +	select SYS_SUPPORTS_32BIT_KERNEL
 +	select SYS_SUPPORTS_MIPS16
-+	select SYS_SUPPORTS_MULTITHREADING
-+	select SYS_SUPPORTS_VPE_LOADER
 +	select SYS_HAS_EARLY_PRINTK
 +	select SYS_HAS_EARLY_PRINTK_8250
 +	select USE_GENERIC_EARLY_PRINTK_8250
-+	select SWAP_IO_SPACE
 +	select BOOT_RAW
 +	select PINCTRL
 +	select ARCH_HAS_RESET_CONTROLLER
 +	select RESET_CONTROLLER
-+	select RTL8380_SERIES
 +	select USE_OF
 +
  config SGI_IP22
