@@ -87,7 +87,7 @@
 	};
 
 	uart0: uart@b8002000 {
-		status = "disabled";
+		status = "okay";
 
 		compatible = "ns16550a";
 		reg = <0xb8002000 0x100>;

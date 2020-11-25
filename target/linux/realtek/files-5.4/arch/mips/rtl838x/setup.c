@@ -106,5 +106,4 @@ void __init plat_time_init(void)
 	mips_hpt_frequency = freq / 2;
 
 	pll_reset_value = sw_r32(RTL838X_PLL_CML_CTRL);
-	rtl838x_serial_init();
 }
