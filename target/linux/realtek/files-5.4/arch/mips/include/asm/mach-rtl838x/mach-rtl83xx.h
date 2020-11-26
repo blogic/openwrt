@@ -373,6 +373,9 @@
 #define RTL838X_PLL_CML_CTRL		(0x0FF8)
 #define RTL838X_STRAP_DBG		(0x100C)
 
+#define RTL838X_CPU_PORT                28
+#define RTL839X_CPU_PORT                52
+
 /*
  * Reset
  */
@@ -446,6 +449,7 @@ struct rtl83xx_soc_info {
 	unsigned char *compatible;
 	volatile void *sw_base;
 	volatile void *icu_base;
+	int cpu_port;
 };
 
 /* rtl83xx-related functions used across subsystems */
