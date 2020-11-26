@@ -119,6 +119,17 @@ void __init prom_init(void)
 		soc_info.name = "DEFAULT";
 		soc_info.family = 0;
 	}
+
 	pr_info("SoC Type: %s\n", get_system_type());
+
+	switch(soc_info.family) {
+	case RTL8380_FAMILY_ID:
+		soc_info.cpu_port = RTL838X_CPU_PORT;
+		break;
+	case RTL8390_FAMILY_ID:
+		soc_info.cpu_port = RTL839X_CPU_PORT;
+		break;
+	}
+
 	prom_init_cmdline();
 }

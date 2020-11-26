@@ -55,6 +55,7 @@
 #define MAPLE_SDS5_FIB_REG0r			(RTL838X_SDS4_REG28 + 0x980)
 
 /* VLAN registers */
+#define RTL838X_VLAN_CTRL			(0x3A74)
 #define RTL838X_VLAN_PROFILE(idx)		(0x3A88 + ((idx) << 2))
 #define RTL838X_VLAN_PORT_EGR_FLTR		(0x3A84)
 #define RTL838X_VLAN_PORT_PB_VLAN(port)		(0x3C00 + ((port) << 2))
@@ -128,6 +129,8 @@
 #define RTL839X_L2_PORT_NEW_SA_FWD(p)		(0x3900 + (((p >> 4) << 2)))
 #define RTL838X_L2_PORT_SALRN(p)		(0x328c + (((p >> 4) << 2)))
 #define RTL839X_L2_PORT_SALRN(p)		(0x38F0 + (((p >> 4) << 2)))
+#define RTL838X_RMA_BPDU_FLD_PMSK		(0x4348)
+#define RTL839X_RMA_BPDU_FLD_PMSK		(0x125C)
 
 /* Port Mirroring */
 #define RTL838X_MIR_CTRL(grp)			(0x5D00 + (((grp) << 2)))
@@ -137,7 +140,7 @@
 #define RTL839X_MIR_DPM_CTRL(grp)		(0x2530 + (((grp) << 2)))
 #define RTL839X_MIR_SPM_CTRL(grp)		(0x2510 + (((grp) << 2)))
 
-/* Storm control */
+/* Storm/rate control and scheduling */
 #define RTL838X_STORM_CTRL			(0x4700)
 #define RTL839X_STORM_CTRL			(0x1800)
 #define RTL838X_STORM_CTRL_LB_CTRL(p)		(0x4884 + (((p) << 2)))
@@ -145,12 +148,23 @@
 #define RTL838X_STORM_CTRL_BURST_PPS_1		(0x4878)
 #define RTL838X_STORM_CTRL_BURST_0		(0x487c)
 #define RTL838X_STORM_CTRL_BURST_1		(0x4880)
+#define RTL839X_STORM_CTRL_LB_TICK_TKN_CTRL_0	(0x1804)
+#define RTL839X_STORM_CTRL_LB_TICK_TKN_CTRL_1	(0x1808)
 #define RTL838X_SCHED_CTRL			(0xB980)
+#define RTL839X_SCHED_CTRL			(0x60F4)
 #define RTL838X_SCHED_LB_TICK_TKN_CTRL_0	(0xAD58)
 #define RTL838X_SCHED_LB_TICK_TKN_CTRL_1	(0xAD5C)
 #define RTL839X_SCHED_LB_TICK_TKN_CTRL_0	(0x1804)
 #define RTL839X_SCHED_LB_TICK_TKN_CTRL_1	(0x1808)
+#define RTL839X_STORM_CTRL_SPCL_LB_TICK_TKN_CTRL (0x2000)
+#define RTL839X_IGR_BWCTRL_LB_TICK_TKN_CTRL_0	(0x1604)
+#define RTL839X_IGR_BWCTRL_LB_TICK_TKN_CTRL_1	(0x1608)
+#define RTL839X_SCHED_LB_TICK_TKN_CTRL		(0x60F8)
+#define RTL839X_SCHED_LB_TICK_TKN_PPS_CTRL	(0x6200)
 #define RTL838X_SCHED_LB_THR			(0xB984)
+#define RTL839X_SCHED_LB_THR			(0x60FC)
+#define RTL838X_SCHED_P_EGR_RATE_CTRL(p)	(0xC008 + (((p) << 7)))
+#define RTL838X_SCHED_Q_EGR_RATE_CTRL(p, q)	(0xC00C + (p << 7) + (((q) << 2)))
 #define RTL838X_STORM_CTRL_PORT_BC_EXCEED	(0x470C)
 #define RTL838X_STORM_CTRL_PORT_MC_EXCEED	(0x4710)
 #define RTL838X_STORM_CTRL_PORT_UC_EXCEED	(0x4714)
@@ -160,12 +174,68 @@
 #define RTL838X_STORM_CTRL_PORT_UC(p)		(0x4718 + (((p) << 2)))
 #define RTL838X_STORM_CTRL_PORT_MC(p)		(0x478c + (((p) << 2)))
 #define RTL838X_STORM_CTRL_PORT_BC(p)		(0x4800 + (((p) << 2)))
+#define RTL839X_STORM_CTRL_PORT_UC_0(p)		(0x185C + (((p) << 3)))
+#define RTL839X_STORM_CTRL_PORT_UC_1(p)		(0x1860 + (((p) << 3)))
+#define RTL839X_STORM_CTRL_PORT_MC_0(p)		(0x19FC + (((p) << 3)))
+#define RTL839X_STORM_CTRL_PORT_MC_1(p)		(0x1a00 + (((p) << 3)))
+#define RTL839X_STORM_CTRL_PORT_BC_0(p)		(0x1B9C + (((p) << 3)))
+#define RTL839X_STORM_CTRL_PORT_BC_1(p)		(0x1BA0 + (((p) << 3)))
+#define RTL839X_TBL_ACCESS_CTRL_2		(0x611C)
+#define RTL839X_TBL_ACCESS_DATA_2(i)		(0x6120 + (((i) << 2)))
+#define RTL839X_IGR_BWCTRL_PORT_CTRL_10G_0(p)	(0x1618 + (((p) << 3)))
+#define RTL839X_IGR_BWCTRL_PORT_CTRL_10G_1(p)	(0x161C + (((p) << 3)))
+#define RTL839X_IGR_BWCTRL_PORT_CTRL_0(p)	(0x1640 + (((p) << 3)))
+#define RTL839X_IGR_BWCTRL_PORT_CTRL_1(p)	(0x1644 + (((p) << 3)))
+#define RTL839X_IGR_BWCTRL_CTRL_LB_THR		(0x1614)
+
+/* Link aggregation (Trunking) */
+#define RTL839X_TRK_MBR_CTR			(0x2200)
+#define RTL838X_TRK_MBR_CTR			(0x3E00)
 
 /* Attack prevention */
 #define RTL838X_ATK_PRVNT_PORT_EN		(0x5B00)
 #define RTL838X_ATK_PRVNT_CTRL			(0x5B04)
 #define RTL838X_ATK_PRVNT_ACT			(0x5B08)
 #define RTL838X_ATK_PRVNT_STS			(0x5B1C)
+
+/* 802.1X */
+#define RTL838X_SPCL_TRAP_EAPOL_CTRL		(0x6988)
+#define RTL839X_SPCL_TRAP_EAPOL_CTRL		(0x105C)
+
+/* QoS */
+#define RTL838X_QM_INTPRI2QID_CTRL		(0x5F00)
+#define RTL839X_QM_INTPRI2QID_CTRL(q)		(0x1110 + (q << 2))
+#define RTL839X_QM_PORT_QNUM(p)			(0x1130 + (((p / 10) << 2)))
+#define RTL838X_PRI_SEL_PORT_PRI(p)		(0x5FB8 + (((p / 10) << 2)))
+#define RTL839X_PRI_SEL_PORT_PRI(p)		(0x10A8 + (((p / 10) << 2)))
+#define RTL838X_QM_PKT2CPU_INTPRI_MAP		(0x5F10)
+#define RTL839X_QM_PKT2CPU_INTPRI_MAP		(0x1154)
+#define RTL838X_PRI_SEL_CTRL			(0x10E0)
+#define RTL839X_PRI_SEL_CTRL			(0x10E0)
+#define RTL838X_PRI_SEL_TBL_CTRL(i)		(0x5FD8 + (((i) << 2)))
+#define RTL839X_PRI_SEL_TBL_CTRL(i)		(0x10D0 + (((i) << 2)))
+#define RTL838X_QM_PKT2CPU_INTPRI_0		(0x5F04)
+#define RTL838X_QM_PKT2CPU_INTPRI_1		(0x5F08)
+#define RTL838X_QM_PKT2CPU_INTPRI_2		(0x5F0C)
+#define RTL839X_OAM_CTRL			(0x2100)
+#define RTL839X_OAM_PORT_ACT_CTRL(p)	 	(0x2104 + (((p) << 2)))
+#define RTL839X_RMK_PORT_DEI_TAG_CTRL(p)	(0x6A9C + (((p >> 5) << 2)))
+#define RTL839X_PRI_SEL_IPRI_REMAP		(0x1080)
+#define RTL838X_PRI_SEL_IPRI_REMAP		(0x5F8C)
+#define RTL839X_PRI_SEL_DEI2DP_REMAP		(0x10EC)
+#define RTL839X_PRI_SEL_DSCP2DP_REMAP_ADDR(i)	(0x10F0 + (((i >> 4) << 2)))
+#define RTL839X_RMK_DEI_CTRL			(0x6AA4)
+#define RTL839X_WRED_PORT_THR_CTRL(i)		(0x6084 + ((i) << 2))
+#define RTL839X_WRED_QUEUE_THR_CTRL(q, i) 	(0x6090 + ((q) * 12) + ((i) << 2))
+#define RTL838X_PRI_DSCP_INVLD_CTRL0		(0x5FE8)
+#define RTL838X_RMK_IPRI_CTRL			(0xA460)
+#define RTL838X_RMK_OPRI_CTRL			(0xA464)
+#define RTL838X_SCHED_P_TYPE_CTRL(p)		(0xC04C + (((p) << 7)))
+#define RTL838X_SCHED_LB_CTRL(p)		(0xC004 + (((p) << 7)))
+#define RTL838X_FC_P_EGR_DROP_CTRL(p)		(0x6B1C + (((p) << 2)))
+
+#define MAX_LAGS 16
+#define MAX_PRIOS 8
 
 enum phy_type {
 	PHY_NONE = 0,
@@ -182,6 +252,7 @@ struct rtl838x_port {
 	u16 pvid;
 	bool eee_enabled;
 	enum phy_type phy;
+	bool is10G;
 	const struct dsa_port *dp;
 };
 
@@ -267,6 +338,10 @@ struct rtl838x_reg {
 	int (*vlan_port_igr_filter)(int port);
 	int (*vlan_port_pb)(int port);
 	int (*vlan_port_tag_sts_ctrl)(int port);
+	int (*rtl838x_vlan_port_tag_sts_ctrl)(int port);
+	int (*trk_mbr_ctr)(int group);
+	int rma_bpdu_fld_pmask;
+	int spcl_trap_eapol_ctrl;
 };
 
 struct rtl838x_switch_priv {
@@ -286,6 +361,10 @@ struct rtl838x_switch_priv {
 	u8 port_mask;
 	u32 fib_entries;
 	struct dentry *dbgfs_dir;
+	int n_lags;
+	u64 lags_port_members[MAX_LAGS];
+	struct net_device *lag_devs[MAX_LAGS];
+	struct notifier_block nb;
 };
 
 void rtl838x_dbgfs_init(struct rtl838x_switch_priv *priv);

@@ -4,7 +4,7 @@
 #include "rtl83xx.h"
 
 extern struct mutex smi_lock;
-
+extern struct rtl83xx_soc_info soc_info;
 
 static inline void rtl839x_mask_port_reg_be(u64 clear, u64 set, int reg)
 {
@@ -68,6 +68,12 @@ static inline void rtl839x_exec_tbl1_cmd(u32 cmd)
 {
 	sw_w32(cmd, RTL839X_TBL_ACCESS_CTRL_1);
 	do { } while (sw_r32(RTL839X_TBL_ACCESS_CTRL_1) & BIT(16));
+}
+
+inline void rtl839x_exec_tbl2_cmd(u32 cmd)
+{
+	sw_w32(cmd, RTL839X_TBL_ACCESS_CTRL_2);
+	do { } while (sw_r32(RTL839X_TBL_ACCESS_CTRL_2) & (1 << 9));
 }
 
 static inline int rtl839x_tbl_access_data_0(int i)
@@ -179,6 +185,11 @@ static inline int rtl839x_mir_spm(int group)
 static inline int rtl839x_mac_link_spd_sts(int p)
 {
 	return RTL839X_MAC_LINK_SPD_STS(p);
+}
+
+static inline int rtl839x_trk_mbr_ctr(int group)
+{
+	return RTL839X_TRK_MBR_CTR + (group << 3);
 }
 
 static u64 rtl839x_read_l2_entry_using_hash(u32 hash, u32 position, struct rtl838x_l2_entry *e)
@@ -358,6 +369,9 @@ const struct rtl838x_reg rtl839x_reg = {
 	.vlan_port_igr_filter = rtl839x_vlan_port_igr_filter,
 	.vlan_port_pb = rtl839x_vlan_port_pb,
 	.vlan_port_tag_sts_ctrl = rtl839x_vlan_port_tag_sts_ctrl,
+	.trk_mbr_ctr = rtl839x_trk_mbr_ctr,
+	.rma_bpdu_fld_pmask = RTL839X_RMA_BPDU_FLD_PMSK,
+	.spcl_trap_eapol_ctrl = RTL839X_SPCL_TRAP_EAPOL_CTRL,
 };
 
 irqreturn_t rtl839x_switch_irq(int irq, void *dev_id)
