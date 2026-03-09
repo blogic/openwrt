@@ -208,6 +208,7 @@ qca_uniphy_pcs_inband_caps(struct phylink_pcs *pcs,
 			     phy_interface_t interface)
 {
 	switch (interface) {
+	case PHY_INTERFACE_MODE_QSGMII:
 	case PHY_INTERFACE_MODE_PSGMII:
 	case PHY_INTERFACE_MODE_SGMII:
 		return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
@@ -275,6 +276,7 @@ static int qca_uniphy_pcs_config(struct phylink_pcs *pcs,
 	case PHY_INTERFACE_MODE_PSGMII:
 		return qca_uniphy_psgmii_calibrate(uniphy);
 	case PHY_INTERFACE_MODE_SGMII:
+	case PHY_INTERFACE_MODE_QSGMII:
 	case PHY_INTERFACE_MODE_2500BASEX:
 		if (interface == uniphy->current_mode)
 			return 0;
@@ -284,7 +286,12 @@ static int qca_uniphy_pcs_config(struct phylink_pcs *pcs,
 				UNIPHY_MISC2_SGMII,
 				UNIPHY_SG_MODE | UNIPHY_SG_AUTONEG,
 				125000000);
-		else
+		else if (interface == PHY_INTERFACE_MODE_QSGMII)
+			qca_uniphy_sgmii_setup(uniphy,
+				UNIPHY_MISC2_SGMII,
+				UNIPHY_CH0_QSGMII_SGMII | UNIPHY_SG_AUTONEG,
+				125000000);
+		else if (interface == PHY_INTERFACE_MODE_2500BASEX)
 			qca_uniphy_sgmii_setup(uniphy,
 				UNIPHY_MISC2_SGMIIPLUS,
 				UNIPHY_SGPLUS_MODE | UNIPHY_SG_AUTONEG,
