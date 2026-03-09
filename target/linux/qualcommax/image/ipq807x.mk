@@ -383,7 +383,7 @@ define Device/netgear_wax620
 	IMAGES += ui-factory.tar
 	IMAGE/ui-factory.tar := append-ubi | qsdk-ipq-factory-nand | pad-to 4096 | wax6xx-netgear-tar
 	DEVICE_PACKAGES := kmod-spi-gpio kmod-gpio-nxp-74hc164 \
-		ipq-wifi-netgear_wax620
+		ipq-wifi-netgear_wax620 -kmod-qca-nss-dp kmod-qca-ppe
 endef
 TARGET_DEVICES += netgear_wax620
 
@@ -398,7 +398,7 @@ define Device/netgear_wax630
 	SOC := ipq8074
 	IMAGES += ui-factory.tar
 	IMAGE/ui-factory.tar := append-ubi | qsdk-ipq-factory-nand | pad-to 4096 | wax6xx-netgear-tar
-	DEVICE_PACKAGES := kmod-spi-gpio ipq-wifi-netgear_wax630
+	DEVICE_PACKAGES := kmod-spi-gpio ipq-wifi-netgear_wax630 -kmod-qca-nss-dp kmod-qca-ppe
 endef
 TARGET_DEVICES += netgear_wax630
 
