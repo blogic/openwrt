@@ -652,6 +652,8 @@ static void qca_ppe_phylink_get_caps(struct dsa_switch *ds, int port,
 			MAC_1000FD | MAC_100FD | MAC_10FD |
 			MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
 
+		__set_bit(PHY_INTERFACE_MODE_QSGMII,
+			  config->supported_interfaces);
 		__set_bit(PHY_INTERFACE_MODE_PSGMII,
 			  config->supported_interfaces);
 		__set_bit(PHY_INTERFACE_MODE_SGMII,

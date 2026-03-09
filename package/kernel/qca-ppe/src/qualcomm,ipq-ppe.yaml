@@ -15,9 +15,9 @@ description: |
   scheduling. It is driven as a DSA switch, using an EDMA network device as the
   CPU port conduit and UNIPHY PCS instances for SerDes link management.
 
-  IPQ6018 provides 7 ports (CPU port 0, user ports 1-4 via PSGMII on uniphy0,
+  IPQ6018 provides 7 ports (CPU port 0, user ports 1-4 via QSGMII/PSGMII on uniphy0,
   and port 5 via uniphy1). IPQ8074 provides 8 ports (CPU port 0, user ports
-  1-4 via PSGMII on uniphy0, and ports 5-6 via uniphy1/uniphy2).
+  1-4 via QSGMII/PSGMII on uniphy0, and ports 5-6 via uniphy1/uniphy2).
 
 $ref: dsa.yaml#
 
