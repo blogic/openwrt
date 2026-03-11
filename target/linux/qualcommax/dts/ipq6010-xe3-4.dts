@@ -3,21 +3,21 @@
 /dts-v1/;
 
 #include "ipq6018.dtsi"
-#include "ipq6018-ess.dtsi"
+#include "ipq6018-ess-cleanup.dtsi"
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
 
 / {
-	/* Qualcomm Technologies, Inc. IPQ6018/AP-CP01-C3 */
+	/* Qualcomm Technologies, Inc. IPQ6018/AP-CP01-C1 */
 	model = "Cambium Networks XE3-4";
 	compatible = "cambiumnetworks,xe3-4", "qcom,ipq6018-cp01", "qcom,ipq6018";
 
 	aliases {
 		serial0 = &blsp1_uart3;
-		ethernet0 = &dp5;
-		ethernet1 = &dp4;
-		label-mac-device = &dp5;
+		ethernet0 = &lan1;
+		ethernet1 = &lan2;
+		label-mac-device = &lan1;
 
 		led-boot = &led_status_amber;
 		led-failsafe = &led_status_amber;
@@ -57,33 +57,6 @@
 			gpios = <&tlmm 35 GPIO_ACTIVE_LOW>;
 		};
 	};
-
-	reg_sd_vmmc: regulator-sdcard-vmmc {
-		compatible = "regulator-fixed";
-		regulator-name = "sdcard-vmmc";
-		regulator-min-microvolt = <2950000>;
-		regulator-max-microvolt = <2950000>;
-
-		startup-delay-us = <200>;
-
-		gpios = <&tlmm 66 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-
-		pinctrl-names = "default";
-		pinctrl-0 = <&sd_vmmc_en_default>;
-	};
-};
-
-&blsp1_uart3 {
-	pinctrl-0 = <&serial_3_pins>;
-	pinctrl-names = "default";
-	status = "okay";
-};
-
-&blsp1_i2c3 {
-	pinctrl-0 = <&i2c_1_pins>;
-	pinctrl-names = "default";
-	status = "okay";
 };
 
 &rpm {
@@ -131,127 +104,44 @@
 			bias-pull-down;
 		};
 	};
-
-	sd_vmmc_en_default: sd-vmmc-en-default-state {
-		pins = "gpio66";
-		function = "gpio";
-		drive-strength = <8>;
-		bias-pull-down;
-	};
-
-	sd_pins: sd-state {
-		pins = "gpio62";
-		function = "gpio";
-		drive-strength = <8>;
-		bias-pull-up;
-	};
 };
 
-&pcie_phy {
-	status = "okay";
-};
-
-&pcie0 {
-	status = "okay";
-	perst-gpios = <&tlmm 60 GPIO_ACTIVE_LOW>;
-
-	pcie@0 {
-		wifi@0,0 {
-			status = "okay";
-
-			/* ath11k has no DT compatible for PCI cards */
-			compatible = "pci17cb,1104";
-			reg = <0x00010000 0 0 0 0>;
-
-			qcom,ath11k-fw-memory-mode = <0>;
-			qcom,ath11k-calibration-variant = "CambiumNetworks-XE34";
-		};
-	};
-};
-
-&sdhc {
-	pinctrl-0 = <&sd_pins>;
-	pinctrl-names = "default";
+&qpic_nand {
 	status = "okay";
 
-	cd-gpios = <&tlmm 62 GPIO_ACTIVE_LOW>;
-	vqmmc-supply = <&reg_sd_vmmc>;
-	bus-width = <4>;
-};
-
-&edma {
-	status = "okay";
-};
-
-&switch {
-	status = "okay";
-
-	switch_lan_bmp = <(ESS_PORT4 | ESS_PORT5)>;
-	switch_mac_mode = <MAC_MODE_PSGMII>;
-	switch_mac_mode2 = <MAC_MODE_SGMII_PLUS>;
-
-	qcom,port_phyinfo {
-		port@4 {
-			port_id = <4>;
-			phy_address = <3>;
-		};
-
-		port@5 {
-			port_id = <5>;
-			phy_address = <24>;
-			port_mac_sel = "QGMAC_PORT";
-		};
-	};
-};
-
-&mdio {
-	status = "okay";
-	pinctrl-0 = <&mdio_pins>;
-	pinctrl-names = "default";
-	reset-gpios = <&tlmm 75 GPIO_ACTIVE_LOW>;
-	reset-delay-us = <10000>;
-	reset-post-delay-us = <50000>;
-
-	ethernet-phy-package@0 {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		compatible = "qcom,qca8075-package";
+	nand@0 {
 		reg = <0>;
 
-		qcom,package-mode = "psgmii";
+		nand-ecc-strength = <4>;
+		nand-ecc-step-size = <512>;
+		nand-bus-width = <8>;
 
-		qca8072: ethernet-phy@3 {
-			compatible = "ethernet-phy-ieee802.3-c22";
-			reg = <3>;
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "rootfs";
+				reg = <0x0 0x6000000>;
+			};
+
+			partition@6000000 {
+				label = "rootfs_1";
+				reg = <0x6000000 0x6000000>;
+			};
+
+			partition@c000000 {
+				label = "NVRAM";
+				reg = <0xc000000 0x3000000>;
+			};
+
+			partition@f000000 {
+				label = "crashLog";
+				reg = <0xf000000 0x1000000>;
+			};
 		};
 	};
-
-	qca8081: ethernet-phy@24 {
-		compatible = "ethernet-phy-id004d.d101";
-		reg = <24>;
-		reset-gpios = <&tlmm 77 GPIO_ACTIVE_LOW>;
-		reset-assert-us = <10000>;
-		reset-deassert-us = <50000>;
-	};
-};
-
-&dp4 {
-	status = "okay";
-
-	phy-handle = <&qca8072>;
-	nvmem-cell-names = "mac-address";
-	nvmem-cells = <&eth1addr 0>;
-	label = "lan2";
-};
-
-&dp5 {
-	status = "okay";
-
-	phy-mode = "sgmii";
-	phy-handle = <&qca8081>;
-	nvmem-cell-names = "mac-address";
-	nvmem-cells = <&ethaddr 0>;
-	label = "lan1";
 };
 
 &blsp1_spi1 {
@@ -354,19 +244,19 @@
 				nvmem-layout {
 					compatible = "u-boot,env";
 
-					ethaddr: ethaddr {
+					macaddr_lan1: ethaddr {
 						#nvmem-cell-cells = <0>;
 					};
 
-					eth1addr: eth1addr {
+					macaddr_lan2: eth1addr {
 						#nvmem-cell-cells = <0>;
 					};
 
-					eth2addr: eth2addr {
+					macaddr_wifi1: eth2addr {
 						#nvmem-cell-cells = <0>;
 					};
 
-					eth5addr: eth5addr {
+					macaddr_wifi2: eth5addr {
 						#nvmem-cell-cells = <0>;
 					};
 				};
@@ -393,44 +283,139 @@
 	};
 };
 
+&mdio {
+	status = "okay";
+
+	pinctrl-0 = <&mdio_pins>;
+	pinctrl-names = "default";
+	reset-gpios = <&tlmm 75 GPIO_ACTIVE_LOW>;
+
+	ethernet-phy-package@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "qcom,qca8075-package";
+		reg = <0>;
+
+		qcom,package-mode = "psgmii";
+
+		qca8072_3: ethernet-phy@3 {
+			compatible = "ethernet-phy-ieee802.3-c22";
+			reg = <3>;
+		};
+	};
+
+	qca8081_24: ethernet-phy@24 {
+		compatible = "ethernet-phy-id004d.d101";
+		reg = <24>;
+		reset-deassert-us = <10000>;
+		reset-gpios = <&tlmm 77 GPIO_ACTIVE_LOW>;
+	};
+};
+
+/* Port dp4 */
+&uniphy0 {
+	status = "okay";
+};
+
+/* Port dp5 */
+&uniphy1 {
+	status = "okay";
+};
+
+&switch {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			ethernet = <&edma>;
+			phy-mode = "internal";
+
+			fixed-link {
+				speed = <1000>;
+				full-duplex;
+			};
+		};
+
+		lan2: port@4 {
+			reg = <4>;
+			label = "lan2";
+			phy-handle = <&qca8072_3>;
+			phy-mode = "psgmii";
+			pcs-handle = <&uniphy0 0>;
+		};
+
+		lan1: port@5 {
+			reg = <5>;
+			label = "lan1";
+			phy-handle = <&qca8081_24>;
+			phy-mode = "sgmii";
+			pcs-handle = <&uniphy1 0>;
+		};
+	};
+};
+
+&edma {
+	status = "okay";
+};
+
 &qpic_bam {
 	status = "okay";
 };
 
-&qpic_nand {
+&blsp1_uart3 {
+	pinctrl-0 = <&serial_3_pins>;
+	pinctrl-names = "default";
 	status = "okay";
+};
 
-	nand@0 {
-		reg = <0>;
+&blsp1_i2c3 {
+	pinctrl-0 = <&i2c_1_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
 
-		nand-ecc-strength = <4>;
-		nand-ecc-step-size = <512>;
-		nand-bus-width = <8>;
+&qusb_phy_1 {
+	status = "okay";
+};
 
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
+&usb2 {
+	status = "okay";
+};
 
-			partition@0 {
-				label = "rootfs";
-				reg = <0x0 0x6000000>;
-			};
+&qusb_phy_0 {
+	status = "okay";
+};
 
-			partition@6000000 {
-				label = "rootfs_1";
-				reg = <0x6000000 0x6000000>;
-			};
+&ssphy_0 {
+	status = "okay";
+};
 
-			partition@c000000 {
-				label = "NVRAM";
-				reg = <0xc000000 0x3000000>;
-			};
+&usb3 {
+	status = "okay";
+};
 
-			partition@f000000 {
-				label = "crashLog";
-				reg = <0xf000000 0x1000000>;
-			};
+&pcie_phy {
+	status = "okay";
+};
+
+&pcie0 {
+	status = "okay";
+	perst-gpios = <&tlmm 60 GPIO_ACTIVE_LOW>;
+
+	pcie@0 {
+		wifi@0,0 {
+			status = "okay";
+
+			/* ath11k has no DT compatible for PCI cards */
+			compatible = "pci17cb,1104";
+			reg = <0x00010000 0 0 0 0>;
+
+			qcom,ath11k-fw-memory-mode = <0>;
+			qcom,ath11k-calibration-variant = "CambiumNetworks-XE34";
 		};
 	};
 };
@@ -440,13 +425,5 @@
 	qcom,ath11k-calibration-variant = "CambiumNetworks-XE34";
 
 	nvmem-cell-names = "mac-address";
-	nvmem-cells = <&eth2addr>;
-};
-
-&qusb_phy_1 {
-	status = "okay";
-};
-
-&usb2 {
-	status = "okay";
+	nvmem-cells = <&macaddr_wifi2>;
 };

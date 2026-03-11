@@ -56,7 +56,7 @@ define Device/cambiumnetworks_xe3-4
 	PAGESIZE := 2048
 	DEVICE_DTS_CONFIG := config@cp01-c3-xv3-4
 	SOC := ipq6010
-	DEVICE_PACKAGES := ipq-wifi-cambiumnetworks_xe34 ath11k-firmware-qcn9074 kmod-ath11k-pci
+	DEVICE_PACKAGES := ipq-wifi-cambiumnetworks_xe34 ath11k-firmware-qcn9074 kmod-ath11k-pci -kmod-qca-nss-dp kmod-qca-ppe
 endef
 TARGET_DEVICES += cambiumnetworks_xe3-4
 
