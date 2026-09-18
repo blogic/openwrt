@@ -63,6 +63,24 @@ endef
 
 gen_sha256sum = $(shell $(MKHASH) sha256 $(DL_DIR)/$(1))
 
+# $(1): file name, $(2): expected hash
+# Same as gen_sha256sum, but a file that matched the expected hash is only
+# hashed again after it changed. Large archives are otherwise hashed on
+# every parse of every Makefile that uses them.
+DL_VERIFIED_DIR:=$(TMP_DIR)/dl-verified
+define gen_sha256sum_cached
+$(shell \
+	id="$(2) $$($(STAGING_DIR_HOST)/bin/stat -c '%i %s %Y %Z' $(DL_DIR)/$(1))"; \
+	stamp="$(DL_VERIFIED_DIR)/$(1)"; \
+	if [ -n "$(2)" ] && [ "$$(cat "$$stamp" 2>/dev/null)" = "$$id" ]; then \
+		echo "$(2)"; \
+	else \
+		hash="$$($(MKHASH) sha256 $(DL_DIR)/$(1))"; \
+		[ "$$hash" != "$(2)" ] || { mkdir -p $(DL_VERIFIED_DIR); echo "$$id" > "$$stamp"; }; \
+		echo "$$hash"; \
+	fi)
+endef
+
 # Used in Build/CoreTargets and HostBuild/Core as an integrity check for
 # downloaded files.  It will add a FORCE rule if the sha256 hash does not
 # match, so that the download can be more thoroughly handled by download.pl.
@@ -71,7 +89,7 @@ define check_download_integrity
   $$(if $$(and $(FILE),$$(wildcard $(DL_DIR)/$(FILE)), \
 	       $$(filter undefined,$$(flavor DownloadChecked/$(FILE)))), \
     $$(eval DownloadChecked/$(FILE):=1) \
-    $$(if $$(filter-out $$(call gen_sha256sum,$(FILE)),$$(expected_hash)), \
+    $$(if $$(filter-out $$(call gen_sha256sum_cached,$(FILE),$$(expected_hash)),$$(expected_hash)), \
       $(DL_DIR)/$(FILE): FORCE) \
   )
 endef
