@@ -593,7 +593,8 @@ define Build/lzma
 endef
 
 define Build/lzma-no-dict
-	$(STAGING_DIR_HOST)/bin/lzma e $@ $(1) $@.new
+	$(CACHE_RUN) $(KDIR)/cache/$(notdir $@).lzma $@ $@.new \
+		$(STAGING_DIR_HOST)/bin/lzma e $@ $(1) $@.new
 	@mv $@.new $@
 endef
 
