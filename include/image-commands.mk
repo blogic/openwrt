@@ -467,7 +467,8 @@ define Build/fit
 endef
 
 define Build/libdeflate-gzip
-	$(STAGING_DIR_HOST)/bin/libdeflate-gzip -f -12 -c $@ $(1) > $@.new
+	$(CACHE_RUN) $(KDIR)/cache/$(notdir $@).gz $@ $@.new \
+		$(STAGING_DIR_HOST)/bin/libdeflate-gzip -f -12 -k -S .new $(1) $@
 	@mv $@.new $@
 endef
 
