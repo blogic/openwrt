@@ -109,9 +109,11 @@ HOST_MAKE_FLAGS =
 
 HOST_CONFIGURE_CMD = $(BASH) ./configure
 
-ifeq ($(HOST_OS),Darwin)
-  HOST_CONFIG_SITE:=$(INCLUDE_DIR)/site/darwin
-endif
+HOST_CONFIG_SITE:=$(if $(filter Darwin,$(HOST_OS)),$(INCLUDE_DIR)/site/darwin )$(INCLUDE_DIR)/site/cache
+# Set HOST_CONFIGURE_CACHE:=1 to keep the autoconf result cache of this host
+# build between builds. Read the note above PKG_CONFIGURE_CACHE in package.mk
+# before you opt a package in.
+HOST_CONFIGURE_CACHE_FILE = $(CONFIGURE_CACHE_BASE)/$(notdir $(BUILD_DIR_HOST))-$(host_cc_id)/$(notdir $(HOST_BUILD_DIR))/$(call strhash,$(HOST_CONFIGURE_ARGS) $(HOST_CONFIGURE_VARS)).cache
 
 define Host/Configure/Default
 	$(if $(HOST_CONFIGURE_PARALLEL),+)(cd $(HOST_BUILD_DIR)/$(3); \
@@ -192,6 +194,7 @@ ifndef DUMP
 	$(call BuildTimeLog,end,prepare)
 
   $(call Host/Exports,$(HOST_STAMP_CONFIGURED))
+  $(if $(and $(CONFIGURE_CACHE_BASE),$(HOST_CONFIGURE_CACHE)),$(HOST_STAMP_CONFIGURED) : export CONFIGURE_CACHE_FILE:=$(HOST_CONFIGURE_CACHE_FILE))
   $(HOST_STAMP_CONFIGURED): $(HOST_STAMP_PREPARED)
 	$(call BuildTimeLog,begin,configure)
 	$(foreach hook,$(Hooks/HostConfigure/Pre),$(call $(hook))$(sep))
