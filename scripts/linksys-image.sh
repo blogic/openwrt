@@ -94,6 +94,6 @@ if [ -n "$SOURCE_DATE_EPOCH" ]; then
 	mtime="--mtime=@${SOURCE_DATE_EPOCH}"
 fi
 
-tar cf $2 -C $tmpdir --sort=name --numeric-owner --owner=0 --group=0 $mtime image/
+tar cf $2 -C $tmpdir --sort=name --numeric-owner --owner=0 --group=0 --mode=go-w $mtime image/
 
 rm -rf $tmpdir

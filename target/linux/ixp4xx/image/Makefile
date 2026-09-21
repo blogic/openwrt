@@ -16,7 +16,7 @@ define Build/freecom-image
 	mkdir -p $@.tmptar
 	# Add kernel
 	cp $@ $@.tmptar/zImage
-	cd $@.tmptar && $(TAR) -c -j -f $@.new --sort=name --numeric-owner --owner=0 --group=0 \
+	cd $@.tmptar && $(TAR) -c -j -f $@.new --sort=name --numeric-owner --owner=0 --group=0 --mode=go-w \
 		$(if $(SOURCE_DATE_EPOCH),--mtime="@$(SOURCE_DATE_EPOCH)") *
 	rm -rf $@.tmptar
 	encode_crc $@.new $@
