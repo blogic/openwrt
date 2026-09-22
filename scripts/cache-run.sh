@@ -38,6 +38,7 @@ tool_hash="$("$MKHASH" sha256 "$tool")" || exit 1
 key="$(printf '%s\n' "$input_hash" "$tool_hash" "$@" | "$MKHASH" sha256)" || exit 1
 
 if [ -f "$slot.data" ] && [ "$(cat "$slot.key" 2>/dev/null)" = "$key" ]; then
+	cmp -s "$slot.data" "$output" && exit 0
 	exec cp "$slot.data" "$output"
 fi
 
