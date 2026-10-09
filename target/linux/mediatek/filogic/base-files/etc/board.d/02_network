@@ -98,7 +98,7 @@ mediatek_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "eth1 wwan"
 		;;
 	glinet,gl-be14000)
-		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 lan5 lan6 lan7 lan8 sfp" wan
+		ucidef_set_interfaces_lan_wan "lan2 lan3 lan4 lan5 lan6 lan7 lan8 lan9 sfp" wan
 		;;
 	asiarf,ap7986-003|\
 	asus,tuf-ax4200q|\
